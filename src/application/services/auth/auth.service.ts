@@ -4,6 +4,10 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { LoginResponseDto } from 'src/presentation/dtos/auth/login-response.dto';
 
+interface AuthResponse extends LoginResponseDto {
+  accessToken: string;
+}
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -11,7 +15,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(email: string, password: string): Promise<LoginResponseDto> {
+  async login(email: string, password: string): Promise<AuthResponse> {
     const user = await this.usersService.getUserByEmail(email);
 
     if (!user) {
