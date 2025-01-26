@@ -1,5 +1,4 @@
-export interface LoginResponseDto {
-  accessToken: string;
+export class LoginResponseDto {
   user: {
     id: string;
     email: string;

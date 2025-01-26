@@ -1,5 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { initializeApp, cert, ServiceAccount } from 'firebase-admin/app';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import {
+  initializeApp,
+  cert,
+  ServiceAccount,
+  getApps,
+} from 'firebase-admin/app';
 import {
   DocumentData,
   Firestore,
@@ -8,16 +13,20 @@ import {
 import { FirestoreConfig } from '../config/firebase.config';
 
 @Injectable()
-export class FirestoreService {
-  private readonly db: Firestore;
+export class FirestoreService implements OnModuleInit {
+  private db: Firestore;
 
-  constructor() {
+  async onModuleInit() {
     try {
-      const app = initializeApp({
-        credential: cert(FirestoreConfig as ServiceAccount),
-      });
-
-      this.db = getFirestore(app);
+      // Check if Firebase app is already initialized
+      if (getApps().length === 0) {
+        const app = initializeApp({
+          credential: cert(FirestoreConfig as ServiceAccount),
+        });
+        this.db = getFirestore(app);
+      } else {
+        this.db = getFirestore();
+      }
     } catch (error) {
       console.error('Error initializing Firestore:', error);
       throw error;
@@ -76,5 +85,15 @@ export class FirestoreService {
       id: doc.id,
       ...(doc.data() as T),
     };
+  }
+
+  async findAll<T extends DocumentData>(
+    collection: string,
+  ): Promise<(T & { id: string })[]> {
+    const querySnapshot = await this.db.collection(collection).get();
+    return querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...(doc.data() as T),
+    }));
   }
 }

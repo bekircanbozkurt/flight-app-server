@@ -1,0 +1,26 @@
+{
+  "users": [
+    {
+      "id": "admin-001",
+      "firstName": "Admin",
+      "lastName": "User",
+      "email": "admin@flightapp.com",
+      "role": "admin",
+      "status": "active",
+      "password": "$2a$10$Y23UDemf9AtPf7gVqHdcUuYo/GdihwZF6nu/lWvQV.M6A32nhLIdq",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "staff-001",
+      "firstName": "Staff",
+      "lastName": "User",
+      "email": "staff@flightapp.com",
+      "role": "staff",
+      "status": "active",
+      "password": "$2a$10$Y23UDemf9AtPf7gVqHdcUuYo/GdihwZF6nu/lWvQV.M6A32nhLIdq",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    }
+  ]
+}
