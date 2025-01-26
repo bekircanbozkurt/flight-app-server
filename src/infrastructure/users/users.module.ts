@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { UsersService } from '../../application/services/users/users.service';
-import { FirestoreService } from '../firebase/firestore.service';
+import { DatabaseModule } from '../database/database.module';
 
 @Module({
-  imports: [],
-  providers: [UsersService, FirestoreService],
+  imports: [DatabaseModule.register()],
+  providers: [UsersService],
   exports: [UsersService],
+  controllers: [],
 })
 export class UsersModule {}

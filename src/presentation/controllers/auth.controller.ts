@@ -37,4 +37,16 @@ export class AuthController {
     // Return user info without the access token
     return { user: authResponse.user };
   }
+
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  async logout(@Res({ passthrough: true }) response: Response): Promise<void> {
+    // Clear the HttpOnly cookie by setting an empty value and immediate expiration
+    response.cookie('access_token', '', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 0,
+    });
+  }
 }

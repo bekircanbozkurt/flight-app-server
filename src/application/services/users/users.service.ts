@@ -1,12 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { FirestoreService } from '../../../infrastructure/firebase/firestore.service';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { User } from '../../../domain/entities/user.entity';
+import { DatabaseService } from '../../../infrastructure/database/database.interface';
 
 @Injectable()
 export class UsersService {
   private readonly collection = 'users';
 
-  constructor(private readonly firestoreService: FirestoreService) {}
+  constructor(
+    @Inject('DATABASE_SERVICE')
+    private readonly databaseService: DatabaseService,
+  ) {}
 
   /**
    * Find a user by their ID
@@ -15,16 +18,16 @@ export class UsersService {
    * @throws NotFoundException if the user doesn't exist
    */
   async findOne(id: string): Promise<User> {
-    const userData = await this.firestoreService.findById<Omit<User, 'id'>>(
+    const user = await this.databaseService.findOne<User>(
       this.collection,
-      id,
+      (user) => user.id === id,
     );
 
-    if (!userData) {
+    if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
 
-    return new User(userData);
+    return new User(user);
   }
 
   /**
@@ -34,16 +37,15 @@ export class UsersService {
    * @throws NotFoundException if the user doesn't exist
    */
   async getUserByEmail(email: string): Promise<User> {
-    const userData = await this.firestoreService.findByField<Omit<User, 'id'>>(
+    const user = await this.databaseService.findOne<User>(
       this.collection,
-      'email',
-      email.toLowerCase(),
+      (user) => user.email.toLowerCase() === email.toLowerCase(),
     );
 
-    if (!userData) {
+    if (!user) {
       throw new NotFoundException(`User with email ${email} not found`);
     }
 
-    return new User(userData);
+    return new User(user);
   }
 }
